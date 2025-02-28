@@ -1,6 +1,7 @@
 package com.craftaro.ultimaterepairing.utils;
 
 import com.craftaro.core.compatibility.CompatibleMaterial;
+import com.craftaro.core.compatibility.ServerVersion;
 import com.craftaro.third_party.com.cryptomorin.xseries.XMaterial;
 import com.craftaro.ultimaterepairing.UltimateRepairing;
 import com.craftaro.core.math.MathUtils;
@@ -36,21 +37,29 @@ public class Methods {
         String equationECO = Settings.ECONOMY_EQUATION.getString();
         String equationITEM = Settings.ITEM_EQUATION.getString();
 
-        equationXP = equationXP.replace("{MaxDurability}", Short.toString(item.getType().getMaxDurability()))
-                .replace("{Durability}", Integer.toString(item.getType().getMaxDurability() - ((Damageable)item.getItemMeta()).getDamage()))
-                .replace("{Damage}", Short.toString(item.getDurability()));
+        short maxDurability = item.getType().getMaxDurability();
+        short damage;
+        if (ServerVersion.isServerVersionBelow(ServerVersion.V1_11)) {
+            damage = item.getDurability();
+        } else {
+            damage = (short) ((Damageable) item.getItemMeta()).getDamage();
+        }
+
+        equationXP = equationXP.replace("{MaxDurability}", Short.toString(maxDurability))
+                .replace("{Durability}", Integer.toString(maxDurability - damage))
+                .replace("{Damage}", Short.toString(damage));
         int XPCost = (int) Math.round(MathUtils.eval(equationXP));
 
-        equationECO = equationECO.replace("{MaxDurability}", Short.toString(item.getType().getMaxDurability()))
-                .replace("{Durability}", Integer.toString(item.getType().getMaxDurability() - ((Damageable)item.getItemMeta()).getDamage()))
-                .replace("{Damage}", Short.toString(item.getDurability()))
+        equationECO = equationECO.replace("{MaxDurability}", Short.toString(maxDurability))
+                .replace("{Durability}", Integer.toString(maxDurability - damage))
+                .replace("{Damage}", Short.toString(damage))
                 .replace("{XPCost}", Integer.toString(XPCost));
 
         int ECOCost = (int) Math.round(MathUtils.eval(equationECO));
 
-        equationITEM = equationITEM.replace("{MaxDurability}", Short.toString(item.getType().getMaxDurability()))
-                .replace("{Durability}", Integer.toString(item.getType().getMaxDurability() - ((Damageable)item.getItemMeta()).getDamage()))
-                .replace("{Damage}", Short.toString(item.getDurability()))
+        equationITEM = equationITEM.replace("{MaxDurability}", Short.toString(maxDurability))
+                .replace("{Durability}", Integer.toString(maxDurability - damage))
+                .replace("{Damage}", Short.toString(damage))
                 .replace("{XPCost}", Integer.toString(XPCost));
 
         int ITEMCost = (int) Math.round(MathUtils.eval(equationITEM));

@@ -9,6 +9,7 @@ import com.craftaro.core.utils.TextUtils;
 import com.craftaro.ultimaterepairing.repair.RepairType;
 import com.craftaro.ultimaterepairing.settings.Settings;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -114,7 +115,10 @@ public class RepairGui extends Gui {
 
     private ItemStack[] getRepairableItems() {
         return Arrays.stream(player.getInventory().getContents())
-                .filter(item -> item != null && item.getDurability() > 0 && item.getMaxStackSize() == 1)
+                .filter(item -> item != null
+                        && item.getDurability() > 0
+                        && item.getMaxStackSize() == 1
+                        && item.getType() != Material.POTION)
                 .toArray(ItemStack[]::new);
     }
 
